@@ -1,0 +1,36 @@
+---
+resources:
+- name: concourse-pipelines
+  type: git
+  icon: github
+  check_every: 10s
+  source:
+    uri: git@github.com:mmn01-sky/vdc-concourse-pipelines-poc.git
+    branch: main
+    # git_config:
+    #   - name: safe.directory
+    #     value: /tmp/build/get
+
+jobs:
+- name: configure-self
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+  - set_pipeline: concourse-pipelines
+    file: concourse-pipelines/pipelines/set-pipelines.yaml
+
+- name: configure-all-pipelines
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+    passed: [configure-self]
+  - set_pipeline: ctf
+    file: concourse-pipelines/pipelines/ctf/pipeline.yaml
+    var_files:
+      - concourse-pipelines/config/global/all.yaml
+  - set_pipeline: gated-pipeline
+    file: concourse-pipelines/pipelines/gated/pipeline.yaml
+  - set_pipeline: image-build
+    file: concourse-pipelines/pipelines/image-build/pipeline.yaml
+  - set_pipeline: scheduled
+    file: concourse-pipelines/pipelines/scheduled/pipeline.yaml

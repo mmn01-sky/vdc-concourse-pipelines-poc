@@ -1,0 +1,4 @@
+cloud_accounts_path: "iaas/api/cloud-accounts"
+regions_path: "iaas/api/regions"
+projects_path: "iaas/api/projects"
+image_profiles_path: "iaas/api/image_profiles"

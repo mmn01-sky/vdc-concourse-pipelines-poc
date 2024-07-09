@@ -1,0 +1,90 @@
+---
+resources:
+- name: concourse-pipelines
+  type: git
+  icon: github
+  check_every: 10s
+  source:
+    uri: git@github.com:mmn01-sky/vdc-concourse-pipelines-poc.git
+    branch: main
+    git_config:
+      - name: safe.directory
+        value: /tmp/build/get
+
+jobs:
+
+- name: dev-plan
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+  - load_var: global-vars
+    file: concourse-pipelines/config/dev/all.yaml
+    format: yaml
+  - task: terraform-plan
+    file: concourse-pipelines/pipelines/gated/tasks/terraform-plan.yaml
+    vars:
+      vdc-environment: dev
+
+- name: dev-apply
+  plan:
+  - get: concourse-pipelines
+    passed: [dev-plan]
+  - load_var: global-vars
+    file: concourse-pipelines/config/dev/global.yaml
+    format: yaml
+  - task: terraform-apply
+    file: concourse-pipelines/pipelines/gated/tasks/terraform-apply.yaml
+    vars:
+      vdc-environment: dev
+
+- name: stage-plan
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+    passed: [dev-apply]
+  - load_var: global-vars
+    file: concourse-pipelines/config/stage/global.yaml
+    format: yaml
+  - task: terraform-plan
+    file: concourse-pipelines/pipelines/gated/tasks/terraform-plan.yaml
+    vars:
+      vdc-environment: stage
+
+
+- name: stage-apply
+  plan:
+  - get: concourse-pipelines
+    passed: [stage-plan]
+  - load_var: global-vars
+    file: concourse-pipelines/config/stage/global.yaml
+    format: yaml
+  - task: terraform-apply
+    file: concourse-pipelines/pipelines/gated/tasks/terraform-apply.yaml
+    vars:
+      vdc-environment: stage
+
+- name: live-plan
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+    passed: [stage-apply]
+  - load_var: global-vars
+    file: concourse-pipelines/config/live/global.yaml
+    format: yaml
+  - task: terraform-plan
+    file: concourse-pipelines/pipelines/gated/tasks/terraform-plan.yaml
+    vars:
+      vdc-environment: live
+
+
+- name: live-apply
+  plan:
+  - get: concourse-pipelines
+    passed: [live-plan]
+  - load_var: global-vars
+    file: concourse-pipelines/config/live/global.yaml
+    format: yaml
+  - task: terraform-apply
+    file: concourse-pipelines/pipelines/gated/tasks/terraform-apply.yaml
+    vars:
+      vdc-environment: live

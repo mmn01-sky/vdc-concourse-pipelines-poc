@@ -1,0 +1,9 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: busybox }
+
+run:
+  path: echo
+  args: [((.:global-vars.environment)), ((.:global-vars.vra_url)), ((.:global-vars.vra_username)), ((cloud_accounts_path))]

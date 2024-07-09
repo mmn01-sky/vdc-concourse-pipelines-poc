@@ -1,0 +1,16 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: hashicorp/packer, tag: full } # https://github.com/concourse/registry-image-resource
+
+inputs:
+  - name: concourse-pipelines
+
+run:
+  path: /bin/sh
+  args:
+    - -c
+    - |
+      cd concourse-pipelines/projects/packer-demo
+      packer validate vsphere_builds.json

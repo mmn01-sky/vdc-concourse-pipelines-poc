@@ -1,0 +1,12 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: hashicorp/terraform, tag: 1.9.0 }
+
+inputs:
+  - name: concourse-pipelines
+
+run:
+  path: echo
+  args: ["terraform plan in ((vdc-environment))"]

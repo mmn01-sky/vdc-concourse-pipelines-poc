@@ -1,0 +1,61 @@
+---
+
+# https://github.com/concourse/oci-build-task/blob/master/README.md
+
+resources:
+- name: image-repo
+  type: git
+  icon: github
+  check_every: 10s
+  source:
+    uri: git@github.com:mmn01-sky/vdc-concourse-pipelines-poc.git
+    branch: main
+    git_config:
+      - name: safe.directory
+        value: /tmp/build/get
+
+# USED FOR PUSHING TO A REGISTRY
+# - name: docker-image
+#   type: registry-image
+#   icon: docker
+#   source:
+#     repository: fluidcloud.registry/vdc/ansible-runner
+#     username: ((registry-username))
+#     password: ((registry-password))
+
+jobs:
+
+- name: build
+  plan:
+  - get: image-repo
+    trigger: true
+  - task: build-image
+    privileged: true # oci-build-task must run in a privileged container
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+        - name: image-repo
+      outputs:
+        - name: image
+      output_mapping: { image: docker-image }
+      params:
+        CONTEXT: image-repo/projects/image-demo
+        UNPACK_ROOTFS: "true" # only needed if using image in a future step
+      run:
+        path: build
+  - task: test
+    config:
+      platform: linux
+      image: docker-image
+      run:
+        path: echo
+        args: ["docker image tests passed"]
+
+  #  USED TO PUSH IMAGE TO REGISTRY RESOURCE 
+  # - put: docker-image
+  #   params:
+  #     image: image/docker-image.tar

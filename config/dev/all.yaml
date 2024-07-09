@@ -1,0 +1,6 @@
+environment: dev
+
+vra_url: https://dev.com
+vra_username: dev_user
+
+terraform_test_var: im_a_test_var

@@ -1,0 +1,49 @@
+---
+
+resources:
+- name: concourse-pipelines
+  type: git
+  icon: github
+  check_every: 10s
+  source:
+    uri: git@github.com:mmn01-sky/vdc-concourse-pipelines-poc.git
+    branch: main
+    git_config:
+      - name: safe.directory
+        value: /tmp/build/get
+
+jobs:
+
+- name: build
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+  - load_var: global-vars
+    file: concourse-pipelines/config/dev/all.yaml
+    format: yaml
+  - task: packer-validate
+    file: concourse-pipelines/pipelines/ctf/tasks/packer-validate.yaml
+  - task: packer-build
+    file: concourse-pipelines/pipelines/ctf/tasks/packer-build.yaml
+
+- name: test
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+    passed: [build]
+  - load_var: global-vars
+    file: concourse-pipelines/config/dev/all.yaml
+    format: yaml
+  - task: test-inspec
+    file: concourse-pipelines/pipelines/ctf/tasks/test-inspec.yaml
+
+- name: deploy
+  plan:
+  - get: concourse-pipelines
+    trigger: true
+    passed: [test]
+  - load_var: global-vars
+    file: concourse-pipelines/config/dev/all.yaml
+    format: yaml
+  - task: print-vars
+    file: concourse-pipelines/pipelines/ctf/tasks/deploy-template.yaml
