@@ -6,11 +6,8 @@ resources:
   icon: github
   check_every: 10s
   source:
-    uri: git@github.com:mmn01-sky/vdc-concourse-pipelines-poc.git
+    uri: https://github.com/mmn01-sky/vdc-concourse-pipelines-poc.git
     branch: main
-    git_config:
-      - name: safe.directory
-        value: /tmp/build/get
 
 jobs:
 
