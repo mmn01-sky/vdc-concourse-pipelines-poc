@@ -40,7 +40,7 @@ jobs:
     trigger: true
     passed: [test]
   - load_var: global-vars
-    file: concourse-pipelines/config/dev/all.yaml
+    file: concourse-pipelines/config/global/all.yaml
     format: yaml
   - task: print-vars
     file: concourse-pipelines/pipelines/ctf/tasks/deploy-template.yaml
