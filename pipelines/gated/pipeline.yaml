@@ -27,7 +27,7 @@ jobs:
   - get: concourse-pipelines
     passed: [dev-plan]
   - load_var: global-vars
-    file: concourse-pipelines/config/dev/global.yaml
+    file: concourse-pipelines/config/dev/all.yaml
     format: yaml
   - task: terraform-apply
     file: concourse-pipelines/pipelines/gated/tasks/terraform-apply.yaml
@@ -40,7 +40,7 @@ jobs:
     trigger: true
     passed: [dev-apply]
   - load_var: global-vars
-    file: concourse-pipelines/config/stage/global.yaml
+    file: concourse-pipelines/config/stage/all.yaml
     format: yaml
   - task: terraform-plan
     file: concourse-pipelines/pipelines/gated/tasks/terraform-plan.yaml
@@ -53,7 +53,7 @@ jobs:
   - get: concourse-pipelines
     passed: [stage-plan]
   - load_var: global-vars
-    file: concourse-pipelines/config/stage/global.yaml
+    file: concourse-pipelines/config/stage/all.yaml
     format: yaml
   - task: terraform-apply
     file: concourse-pipelines/pipelines/gated/tasks/terraform-apply.yaml
@@ -66,7 +66,7 @@ jobs:
     trigger: true
     passed: [stage-apply]
   - load_var: global-vars
-    file: concourse-pipelines/config/live/global.yaml
+    file: concourse-pipelines/config/live/all.yaml
     format: yaml
   - task: terraform-plan
     file: concourse-pipelines/pipelines/gated/tasks/terraform-plan.yaml
@@ -79,7 +79,7 @@ jobs:
   - get: concourse-pipelines
     passed: [live-plan]
   - load_var: global-vars
-    file: concourse-pipelines/config/live/global.yaml
+    file: concourse-pipelines/config/live/all.yaml
     format: yaml
   - task: terraform-apply
     file: concourse-pipelines/pipelines/gated/tasks/terraform-apply.yaml
