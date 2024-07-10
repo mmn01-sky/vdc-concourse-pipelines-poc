@@ -16,4 +16,4 @@ run:
     - -c
     - |
       cd concourse-pipelines/projects/packer-demo
-      packer build vsphere_builds.json 
+      echo "packer build vsphere_builds.json"
