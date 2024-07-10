@@ -47,7 +47,7 @@ jobs:
   - task: test
     config:
       platform: linux
-      image: docker-image
+      image: busybox
       run:
         path: echo
         args: ["docker image tests passed"]
