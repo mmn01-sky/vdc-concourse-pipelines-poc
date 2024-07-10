@@ -31,3 +31,5 @@ jobs:
     file: concourse-pipelines/pipelines/image-build/pipeline.yaml
   - set_pipeline: scheduled
     file: concourse-pipelines/pipelines/scheduled/pipeline.yaml
+  - set_pipeline: parallel
+    file: concourse-pipelines/pipelines/parallel/pipeline.yaml

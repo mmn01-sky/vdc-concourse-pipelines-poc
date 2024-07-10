@@ -1,0 +1,46 @@
+
+
+jobs:
+- name: check-vdc-connectivity
+  plan:
+    - in_parallel:
+      - task: check-vdc-dev
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: curlimages/curl
+          run:
+            path: /bin/sh
+            args: 
+              - -c
+              - | 
+                curl -vvv -L -m 10 -k https://devportal.vdc.cloud.sky/
+      - task: check-vdc-stage
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: curlimages/curl
+          run:
+            path: /bin/sh
+            args: 
+              - -c
+              - | 
+                curl -vvv -L -m 10 -k https://stgportal.vdc.cloud.sky/
+      - task: check-vdc-live
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: curlimages/curl
+          run:
+            path: /bin/sh
+            args: 
+              - -c
+              - | 
+                curl -vvv -L -m 10 -k https://portal.vdc.cloud.sky/
+      
