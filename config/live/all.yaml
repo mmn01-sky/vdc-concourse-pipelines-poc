@@ -1,0 +1,6 @@
+environment: live
+
+vra_url: https://live.com
+vra_username: live_user
+
+terraform_test_var: im_a_test_var
